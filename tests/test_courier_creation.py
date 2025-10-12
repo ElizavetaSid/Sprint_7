@@ -1,26 +1,30 @@
 import requests
 from helpers import CourierGenerator
 from curl import URL
-
+import allure
 
 class TestCourierCreation:
 
+    @allure.title("Тест успешного создания курьера")
     def test_successful_courier_creation(self):
         courier_data = CourierGenerator.register_new_courier_and_return_login_password()
         assert courier_data
         
-        login, password, first_name = courier_data
-        payload = {
-            "login": login,
-            "password": password,
-            "firstName": first_name
-        }
+        with allure.step('Проверяем структуру ответа для успешного запроса'):
+            login, password, first_name = courier_data
+            payload = {
+                "login": login,
+                "password": password,
+                "firstName": first_name
+            }
         response = requests.post(URL.CREATING_COURIER, data=payload)
 
-        assert response.status_code == 201, f"Ожидался 201, получен {response.status_code}"
-        assert response.json() == {"ok": True}, "Тело ответа не соответствует {'ok': true}"
+        with allure.step('Проверяем код статуса 201 и правильное тело ответа'):
+            assert response.status_code == 201, f"Ожидался 201, получен {response.status_code}"
+            assert response.json() == {"ok": True}, "Тело ответа не соответствует {'ok': true}"
 
-
+    @allure.title('Тесты на отсутствие обязательных полей')
+    @allure.description('Тест без логина. Тест без пароля')
     def test_create_courier_missing_login(self):
         courier_data = CourierGenerator.register_new_courier_and_return_login_password()
         assert courier_data, "Предусловие не выполнено: вспомогательный метод не вернул данные"
@@ -47,6 +51,7 @@ class TestCourierCreation:
         response = requests.post(URL.CREATING_COURIER, data=payload)
         assert response.status_code == 400, f"Недостаточно данных для создания учетной записи"
 
+    @allure.title('Тест создания дубликата курьера')
     def test_create_duplicate_courier_409(self):
         courier_data = CourierGenerator.register_new_courier_and_return_login_password()
         assert courier_data
