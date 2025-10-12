@@ -1,0 +1,42 @@
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# Local History for Visual Studio Code
+.history/
+*.app
+.snapshots/*
+
+# General CodeKit files to ignore
+config.codekit
+config.codekit3
+/min
+
+## User settings
+xcuserdata/
+# Кэш pytest
+.pytest_cache/
+
+# Кэш Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Результаты Allure
+allure_results/
+allure-report/
+
+# Логи
+*.log
+
+# Настройки IDE
+.vscode/
+.idea/
+
+# Системные файлы
+.DS_Store
+Thumbs.db
