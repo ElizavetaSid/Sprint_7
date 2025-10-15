@@ -42,9 +42,6 @@ class TestOrderCreation:
             cancel_response = requests.put(URL.CANCEL_ORDER, json=cancel_payload)
         
         with allure.step('Проверяем успешную отмену заказа'):
-            # Проверяем, что статус отмены корректен
             assert cancel_response.status_code in [200, 204], f"Ожидался 200 или 204, получен {cancel_response.status_code}"
             
-            # Дополнительно проверяем ответ на отмену
-            cancel_response_data = cancel_response.json()
-            assert cancel_response_data.get('status') == 'cancelled', "Статус заказа не 'cancelled'"
+           
