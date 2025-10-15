@@ -20,8 +20,7 @@ class TestOrderCreation:
             order_payload = DataOrder.order_data.copy()
         
         with allure.step('Добавляем цвета если они указаны'):
-            if colors:
-                order_payload['color'] = colors
+            colors and order_payload.update({'color': colors})
         
         with allure.step('Отправляем запрос на создание заказа'):
             response = requests.post(URL.CREATING_ORDER, json=order_payload)
@@ -32,4 +31,20 @@ class TestOrderCreation:
         with allure.step('Проверяем, что в ответе есть track number'):
             assert ErrorMessages.TRACK_FIELD in response.text
         
+        with allure.step('Получаем track_number из ответа'):
+            response_data = response.json()
+            track_number = response_data[ErrorMessages.TRACK_FIELD]
 
+        with allure.step('Подготавливаем данные для отмены заказа'):
+            cancel_payload = {"track": track_number}
+        
+        with allure.step('Отправляем запрос на отмену заказа'):
+            cancel_response = requests.put(URL.CANCEL_ORDER, json=cancel_payload)
+        
+        with allure.step('Проверяем успешную отмену заказа'):
+            # Проверяем, что статус отмены корректен
+            assert cancel_response.status_code in [200, 204], f"Ожидался 200 или 204, получен {cancel_response.status_code}"
+            
+            # Дополнительно проверяем ответ на отмену
+            cancel_response_data = cancel_response.json()
+            assert cancel_response_data.get('status') == 'cancelled', "Статус заказа не 'cancelled'"
