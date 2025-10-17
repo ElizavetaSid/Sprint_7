@@ -19,8 +19,7 @@ class TestCourierCreation:
         with allure.step('Проверяем код статуса 201 и правильное тело ответа'):
             assert response.status_code == 201, f"Ожидался 201, получен {response.status_code}"
             assert response.json() == {"ok": True}, "Тело ответа не соответствует {'ok': true}"
-  
-        requests.delete(f"{URL.CREATING_COURIER}/{login}")
+            
 
     @allure.title('Тесты на отсутствие обязательных полей')
     @allure.description('Тест без логина. Тест без пароля')
@@ -61,11 +60,3 @@ class TestCourierCreation:
         with allure.step('Пытаемся создать курьера с теми же данными второй раз'):
             duplicate_response = requests.post(URL.CREATING_COURIER, data=payload)
             assert duplicate_response.status_code == 409, f"Ожидался 409, получен код : {duplicate_response.status_code}"
-
-        with allure.step('Удаляем тестового курьера'):
-            login_payload = {"login": login, "password": password}
-            login_response = requests.post(URL.COURIER_LOGIN, data=login_payload)
-        
-        login_response.status_code == 200
-        courier_id = login_response.json()["id"]
-        requests.delete(f"{URL.CREATING_COURIER}/{courier_id}")

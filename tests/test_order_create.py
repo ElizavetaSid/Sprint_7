@@ -29,19 +29,19 @@ class TestOrderCreation:
             assert response.status_code == 201
         
         with allure.step('Проверяем, что в ответе есть track number'):
-            assert ErrorMessages.TRACK_FIELD in response.text
+            response_data = response.json()
+            assert ErrorMessages.TRACK_FIELD in response_data
         
         with allure.step('Получаем track_number из ответа'):
-            response_data = response.json()
-            track_number = response_data[ErrorMessages.TRACK_FIELD]
+            track_number = response_data['track']
 
         with allure.step('Подготавливаем данные для отмены заказа'):
-            cancel_payload = {"track": track_number}
+            cancel_payload = f"{URL.CANCEL_ORDER}?track={track_number}"
         
         with allure.step('Отправляем запрос на отмену заказа'):
-            cancel_response = requests.put(URL.CANCEL_ORDER, json=cancel_payload)
+            cancel_response = requests.put(cancel_payload)
         
         with allure.step('Проверяем успешную отмену заказа'):
-            assert cancel_response.status_code in [200, 204], f"Ожидался 200 или 204, получен {cancel_response.status_code}"
+            assert cancel_response.status_code == 200, f"Ожидался 200, получен {cancel_response.status_code}"
             
            

@@ -20,10 +20,10 @@ class TestsGetOrdersList:
             assert 'orders' in response_data
             assert isinstance(response_data['orders'], list)
 
-        with allure.step('Если есть заказы, проверяем структуру первого заказа'):
-            if len(response_data['orders']) > 0:
-                first_order = response_data['orders'][0]
+        with allure.step('Список заказов не пуст'):
+            assert len(response_data['orders']) > 0
+            first_order = response_data['orders'][0]
             
-            with allure.step('Проверяем обязательные поля в заказе (на основе общих практик API)'):
-                assert 'id' in first_order
-                assert 'track' in first_order
+        with allure.step('Проверяем обязательные поля в заказе (на основе общих практик API)'):
+            assert 'id' in first_order
+            assert 'track' in first_order

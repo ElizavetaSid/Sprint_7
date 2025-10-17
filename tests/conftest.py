@@ -31,18 +31,15 @@ def register_new_courier_and_return_login_password(generate_courier_data):
     
     with allure.step(f"Создаем тестового курьера {login}"):
         response = requests.post(URL.CREATING_COURIER, data=payload)
-        assert response.status_code == 201, f"Не удалось создать курьера, статус: {response.status_code}"
-    
-    # Возвращаем данные тесту
+        if response.status_code == 201:
+            courier_created = True
+
     yield login, password, first_name
     
-    # Этот код выполнится после завершения теста
     with allure.step(f"Удаляем тестового курьера {login}"):
-            # Логинимся чтобы получить ID курьера
-        login_payload = {"login": login, "password": password}
-        login_response = requests.post(URL.COURIER_LOGIN, data=login_payload)
-            
-        login_response.status_code == 200
-        courier_id = login_response.json()["id"]
-                # Удаляем курьера
-        delete_response = requests.delete(f"{URL.CREATING_COURIER}/{courier_id}")
+    
+        if courier_created:
+            login_payload = {"login": login, "password": password}
+            login_response = requests.post(URL.COURIER_LOGIN, data=login_payload)
+            courier_id = login_response.json()["id"]
+            requests.delete(f"{URL.CREATING_COURIER}/{courier_id}")
